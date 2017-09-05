@@ -1,0 +1,132 @@
+
+##..: Conky status :..
+##
+  total_run_times 0                   #Time in seconds; 0 = ever
+  background no                       #No fork in background
+##
+##..: System Settings :..
+##
+  cpu_avg_samples 1                   #The number of samples to average for CPU monitoring
+  net_avg_samples 2                   #The number of samples to average for net data 
+##
+##..: Memory :..
+##
+  double_buffer yes                   #eliminates flicker
+  no_buffers yes                      #Subtract (file system) buffers from used memory?
+  text_buffer_size 1024               #Textual buffer memory
+##
+##..: Display :..
+  out_to_console no                   #Print text to stdout
+  update_interval 1                   #Update interval
+##
+##..: Conky Window :..
+##
+  alignment top_left                  #Alignement
+  #
+  minimum_size 500                    #Minimum width (px)
+  maximum_width 500                   #Maximum width(px)
+  #
+  gap_x 30                            #Gap between left/right border
+  gap_y 10                          #Gap between upper/lower border
+  #
+  draw_shades yes                      #Draw shadows?
+  draw_outline yes                     #Draw outline?
+  draw_borders yes                     #Borders to the text?
+  border_width 0                      #Width of borders
+  border_inner_margin 1               #Width of margins
+  #
+own_window_class Conky
+own_window yes
+own_window_type normal
+own_window_argb_visual yes
+own_window_argb_value 180
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+##
+##..: Format :..
+##
+  use_xft yes                         #Use Xft
+  xftalpha .1                         #Alpha of Xft
+  override_utf8_locale yes            #UTF8 forcing
+  uppercase no                        #Only capital letters
+  use_spacer right                    #Adds spaces around certain objects to stop them from moving other things around
+  #
+  xftfont saxMono:size=9              #Default font
+  #
+  default_bar_size 82 3               #Specify a default width and height for bars
+  stippled_borders 3                  #Border dashing
+##
+##..: Colors :..
+##
+  default_color FFFFFF                #Default color
+  default_shade_color 333333          #Default color for shadows
+  default_outline_color black         #Default border color
+  #
+  color1 3273b5                       #Silver
+  color2 1253FF                       #Pearl white
+  color3 3273b5                       #Grey
+##
+##..: Misc :..
+##
+  short_units yes                       #Shortens units to a single character
+  pad_percents 2                        #Number of decimals
+##
+##..: Clock and rings :..
+##-- SET TO YOUR PATH!!! --
+##
+
+  lua_load ~/.conky/lua/clock.lua
+  lua_draw_hook_pre clock_rings
+
+
+TEXT
+${font neuropol:size=20}${time %H:%M}${font}  ${voffset -3}${font  neuropol:size=9}$uptime
+${cpubar cpu6 0, 200}${color1}
+${font  neuropol:size=8 }${color2}${exec date +%B\ %Y | sed 's/^.\| [a-z]/\U&/g'}
+${color3}${execpi 60 JOUR=`date +%e`; cal | sed '1d' | sed 's/^/ /g' | sed /" $JOUR "/s/" $JOUR "/" "'${color FF0000}'"$JOUR"'${color3}'" "/}
+
+#..: NET TRAFFIC :..
+${color 1253FF}${voffset 1}${cpugraph cpu6 1,200}${voffset 1}${cpugraph cpu6 17,1}${color3}
+${offset 15}${if_up eno1}${voffset -5}Dw ${font neuropol:size=20} ${voffset -8}${downspeed eno1}$else ${font  neuropol:size=8 }${voffset -5}Dw ${font neuropol:size=20} ${voffset -8}${downspeed wlan0}$endif${font  neuropol:size=8 }
+${offset 15}${if_up eno1}${voffset 6}Up ${font neuropol:size=20} ${voffset -7}${upspeed eno1}$else ${font  neuropol:size=8 }${voffset 6}Up ${font neuropol:size=20} ${voffset -7}${upspeed wlan0}$endif${font  neuropol:size=8 }
+${offset 20}${voffset -1}${cpubar cpu6 0, 110}${voffset 2}${color1}
+${offset 15}${if_up eno1}TotalDown ${totaldown eno1}$else tDown   ${totaldown eno1}$endif
+#
+
+
+#..: CPU USAGE :..
+#--- if you use a multi-core system, change values ---
+#--- in this case, you may cange position of objects (offset, voffset) ---
+${color 1253FF}${voffset 1}${cpugraph cpu6 1,250}${voffset 1}${cpugraph cpu6 17,1}${color3}
+${font neuropol:size=20}${cpu cpu0}% ${font  neuropol:size=8 }Cpu
+#${offset 200}${font neuropol:size=20}${cpu cpu0}% ${font  neuropol:size=8 }Cpu 
+${cpubar cpu6 0, 110}${voffset 2}${color1}
+Cpu°C  ${execi 20 sensors | grep "high" | cut -d "+" -f2 | cut -c1-4 }
+#CpuT  ${execi 20 sensors | grep "100" | cut -d "+" -f2 | cut -c1-4 } °C
+
+
+#..: HARD DISK :..
+#--- correct to your partitions ---
+${color 1253FF}${voffset 1}${cpugraph cpu6 1,250}${voffset 1}${cpugraph cpu6 17,1}${color3}
+${font neuropol:size=20}$memperc% ${font  neuropol:size=8 } Ram
+${voffset -5}${cpubar cpu6 0, 110}${voffset 2}${color1}
+Ram   $mem / $memmax
+Home   ${fs_free /home} / ${fs_size /home}
+##
+##..: Todo.txt :..
+##-- neuropolist your todo by priority --
+##
+
+
+${offset 30}${color3}${font neuropol:size=40}ToDo
+${color3}${cpubar cpu6 0, 200}
+${voffset -50}${color3}${font  neuropol:size=18}${execpi 600 cat ~/.todo.txt | head -7}
+##
+##..: Separation line
+##
+${color3}${cpubar cpu6 0, 200}
+##
+##..: Backup status :..
+#
+
+
